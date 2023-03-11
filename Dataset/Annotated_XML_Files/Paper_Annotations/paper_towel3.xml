@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Paper</folder>
+	<filename>paper_towel3.JPG</filename>
+	<path>C:\Users\sarah\trash_ai_training_photos\Paper\paper_towel3.JPG</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3024</width>
+		<height>4032</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>paper</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>593</xmin>
+			<ymin>1191</ymin>
+			<xmax>2237</xmax>
+			<ymax>3041</ymax>
+		</bndbox>
+	</object>
+</annotation>
