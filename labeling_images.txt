@@ -1,0 +1,8 @@
+1. Install labelImg using 'pip install labelImg'
+2. Open the labelImg.py file that is automatically downloaded when you install labelImg. The labelImg interface should open.
+3. You should have a folder with all your photos. Create a new empty folder that will store the annotated labeled photos.
+4. Click on 'Open Dir' and choose the folder with the photos. Then click on 'Changes Save Dir' and choose the new empty folder that you created.
+5. Go to 'View' at the top and check 'Auto Save Mode'
+6. Click 'Next Image' until you see your photos start to show up.
+7. Click 'Create Rect Box' and place a box as close as possible around the image and label it.
+8. It should automatically save the XML file to the folder you chose for 'Changes Save Dir' when you click 'Next Image' again.
