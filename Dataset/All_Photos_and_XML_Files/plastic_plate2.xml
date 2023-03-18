@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Plastic</folder>
+	<filename>plastic_plate2.JPG</filename>
+	<path>C:\Users\sarah\trash_ai_training_photos\Plastic\plastic_plate2.JPG</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3024</width>
+		<height>4032</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>plastic</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>168</xmin>
+			<ymin>728</ymin>
+			<xmax>2743</xmax>
+			<ymax>3172</ymax>
+		</bndbox>
+	</object>
+</annotation>

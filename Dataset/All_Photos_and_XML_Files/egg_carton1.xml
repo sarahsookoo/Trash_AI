@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Paper</folder>
+	<filename>egg_carton1.JPG</filename>
+	<path>C:\Users\sarah\trash_ai_training_photos\Paper\egg_carton1.JPG</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3024</width>
+		<height>4032</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>paper</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>25</xmin>
+			<ymin>1816</ymin>
+			<xmax>2993</xmax>
+			<ymax>2735</ymax>
+		</bndbox>
+	</object>
+</annotation>

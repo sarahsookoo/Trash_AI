@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Paper</folder>
+	<filename>paper_flyer4.JPG</filename>
+	<path>C:\Users\sarah\trash_ai_training_photos\Paper\paper_flyer4.JPG</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3024</width>
+		<height>4032</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>paper</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>93</xmin>
+			<ymin>1872</ymin>
+			<xmax>2962</xmax>
+			<ymax>2535</ymax>
+		</bndbox>
+	</object>
+</annotation>

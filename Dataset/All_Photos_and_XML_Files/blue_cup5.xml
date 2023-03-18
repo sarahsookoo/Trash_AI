@@ -1,0 +1,26 @@
+<annotation>
+	<folder>Plastic</folder>
+	<filename>blue_cup5.JPG</filename>
+	<path>C:\Users\sarah\trash_ai_training_photos\Plastic\blue_cup5.JPG</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3024</width>
+		<height>4032</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>plastic</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>643</xmin>
+			<ymin>1585</ymin>
+			<xmax>2300</xmax>
+			<ymax>3210</ymax>
+		</bndbox>
+	</object>
+</annotation>
