@@ -1,0 +1,26 @@
+<annotation>
+	<folder>trash_dataset</folder>
+	<filename>towel_1.JPG</filename>
+	<path>/Users/adorabarikdar/Documents/Documents - Adora’s MacBook Air/trash_dataset/towel_1.JPG</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3024</width>
+		<height>4032</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>towel</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>49</xmin>
+			<ymin>1640</ymin>
+			<xmax>2854</xmax>
+			<ymax>3313</ymax>
+		</bndbox>
+	</object>
+</annotation>

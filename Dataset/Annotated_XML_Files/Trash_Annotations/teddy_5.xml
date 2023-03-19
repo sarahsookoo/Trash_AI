@@ -1,0 +1,26 @@
+<annotation>
+	<folder>trash_dataset</folder>
+	<filename>teddy_5.JPG</filename>
+	<path>/Users/adorabarikdar/Documents/Documents - Adora’s MacBook Air/trash_dataset/teddy_5.JPG</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3024</width>
+		<height>4032</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>teddy</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>222</xmin>
+			<ymin>355</ymin>
+			<xmax>2570</xmax>
+			<ymax>3455</ymax>
+		</bndbox>
+	</object>
+</annotation>

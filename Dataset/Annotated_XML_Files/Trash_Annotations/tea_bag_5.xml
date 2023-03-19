@@ -1,0 +1,26 @@
+<annotation>
+	<folder>trash_dataset</folder>
+	<filename>tea_bag_5.JPG</filename>
+	<path>/Users/adorabarikdar/Documents/Documents - Adora’s MacBook Air/trash_dataset/tea_bag_5.JPG</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>3024</width>
+		<height>4032</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>tea bag</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>859</xmin>
+			<ymin>1771</ymin>
+			<xmax>1912</xmax>
+			<ymax>3276</ymax>
+		</bndbox>
+	</object>
+</annotation>
