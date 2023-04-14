@@ -7,7 +7,7 @@ function HeroSection() {
     return (
         <div className='hero-container'>
             <video src='/img2.mp4' autoPlay loop muted />
-            <h1>Trash Statistics</h1>
+            <h1> Smart Trash </h1>
             {/* <p>click here</p> */}
             <div className='hero-btns'>
                 <Button 

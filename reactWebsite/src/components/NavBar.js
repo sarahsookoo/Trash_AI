@@ -5,7 +5,7 @@ import './NavBar.css';
 
 function NavBar() {
     const [click, setClick] = useState(false);
-    const [button, setButton] = useState(true)
+    const [button, setButton] = useState(true);
 
     const handleClick = () => setClick(!click);
     const closeMobileMenu = () => setClick(false);
@@ -19,7 +19,7 @@ function NavBar() {
     };
 
     useEffect(() => {
-        showButton()
+        showButton();
     }, []);
 
     window.addEventListener('resize', showButton);
@@ -29,7 +29,7 @@ function NavBar() {
             <nav className='navbar'>
                 <div className='navbar-container'>
                     <Link to='/' className='navbar-logo' onClick={closeMobileMenu}>
-                    TRASH AI 
+                    SMART TRASH 
                     <i className= 'fab.fa-typo3'/>
                     </Link>
                     <div className='menu-icon' onClick={handleClick}>
@@ -43,7 +43,7 @@ function NavBar() {
                         </li>
                         <li className='nav-item'>
                             <Link to ='/services' classname='nav-links' onClick={closeMobileMenu}>
-                                Services
+                                Info
                             </Link>
                         </li>
                         <li className='nav-item'>
@@ -51,7 +51,7 @@ function NavBar() {
                                 Profile
                             </Link>
                         </li>
-                        <li> 
+                        <li className='nav-item'>
                             <Link to ='/signup' classname='nav-links-mobile' onClick={closeMobileMenu}>
                                 Sign Up
                             </Link>
@@ -65,4 +65,4 @@ function NavBar() {
     );
 }
 
-export default NavBar
+export default NavBar;

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import '../../App.css';
+import { Button } from '../Button';
+// import '../../App.css';
+import './Signup.css';
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -20,10 +22,12 @@ const Signup = () => {
   };
 
   return (
-    <div>
-      <h1>Signup</h1>
+    
+    <div className='signup'>
+      <h1>Sign-Up</h1>
+      <div className='signup-container'>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className='name-container'>
           <label htmlFor="name">Name:</label>
           <input
             type="text"
@@ -32,7 +36,7 @@ const Signup = () => {
             onChange={(event) => setName(event.target.value)}
           />
         </div>
-        <div>
+        <div className='email-container'>
           <label htmlFor="email">Email:</label>
           <input
             type="email"
@@ -41,7 +45,7 @@ const Signup = () => {
             onChange={(event) => setEmail(event.target.value)}
           />
         </div>
-        <div>
+        <div className='password-container'>
           <label htmlFor="password">Password:</label>
           <input
             type="password"
@@ -50,8 +54,18 @@ const Signup = () => {
             onChange={(event) => setPassword(event.target.value)}
           />
         </div>
-        <button type="submit">Signup</button>
+        {/* <button type="submit">Signup</button> */}
+        <div className='signup-btn'>
+                <Button 
+                className='btns' 
+                button type="submit"
+                buttonStyle='btn--page'
+                buttonSize='btn--large'>
+                    Sign-Up
+                </Button>
+        </div>
       </form>
+      </div>
     </div>
   );
 };
