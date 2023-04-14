@@ -1,0 +1,47 @@
+.signup {
+    margin-top: 30px ;
+}
+
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    max-width: 1500px;
+    margin-top: 100px ;
+}
+
+.name-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    max-width: 1500px;
+    font-size: 20px;
+}
+
+.email-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+.password-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.signup-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
