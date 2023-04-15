@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import hashlib
 
 app = Flask(__name__)
 CORS(app)
@@ -11,7 +12,11 @@ def signup():
     name = request.json['name']
     email = request.json['email']
     password = request.json['password']
-    user = {'name': name, 'email': email, 'password': password}
+    
+    # Hash the password
+    password_hash = hashlib.sha256(password.encode()).hexdigest() 
+    
+    user = {'name': name, 'email': email, 'password_hash': password}
     users.append(user)
     return jsonify({'message': 'User created successfully'})
 
@@ -19,7 +24,11 @@ def signup():
 def login():
     email = request.json['email']
     password = request.json['password']
-    user = next((u for u in users if u['email'] == email and u['password'] == password), None)
+
+    # Hash the password
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+
+    user = next((u for u in users if u['email'] == email and u['password_hash'] == password_hash), None)
     if user:
         return jsonify({'message': 'Login successful'})
     else:
