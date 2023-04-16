@@ -1,5 +1,23 @@
 .signup {
-    margin-top: 30px ;
+    margin-top: 30px;
+    color: rgb(8, 8, 71);
+    font-size: x-large;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    box-shadow: 0px 2px 10px rgba(0,0,0,0.4);
+    padding: 20px 20px;
+    border-radius: 10px;    
+    animation: signupAnimation 1s ease-in-out;
+}
+
+@keyframes signupAnimation {
+    0% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .signup-container {
@@ -9,6 +27,8 @@
     height: 80px;
     max-width: 1500px;
     margin-top: 100px ;
+    margin-bottom: 100px;
+    color: rgb(8, 8, 71);
 }
 
 .name-container {
@@ -17,14 +37,14 @@
     align-items: center;
     height: 80px;
     max-width: 1500px;
-    font-size: 20px;
+    font-size: large;
 }
 
 .email-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 20px;
+    font-size: large;
 }
 
 .password-container {
@@ -33,14 +53,31 @@
     align-items: center;
     margin-top: 20px;
     margin-bottom: 20px;
-    font-size: 20px;
+    font-size: large;
 }
 
 .signup-btn {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 18px;
+    font-weight: bold;
 }
+
+.signup-btn:hover {
+    background-color: white;
+    color: #b81a1a;
+    border: 1px solid #b81a1a;
+}
+
+body {
+    background-image: url('./recycling_img.jpg');
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
 
 
 

@@ -24,7 +24,7 @@ const LogIn = () => {
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <div className='email-container'>
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">Email: </label>
           <input
             type="email"
             id="email"
@@ -33,7 +33,7 @@ const LogIn = () => {
           />
         </div>
         <div className='password-container'>
-          <label htmlFor="password">Password:</label>
+          <label htmlFor="password">Password: </label>
           <input
             type="password"
             id="password"
@@ -41,7 +41,7 @@ const LogIn = () => {
             onChange={(event) => setPassword(event.target.value)}
           />
         </div>
-        <div className='signup-btn'>
+        <div className='login-btn'>
                 <Button 
                 className='btns' 
                 button type="submit"
