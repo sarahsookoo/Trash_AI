@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '../Button';
+import '../../App.css';
 import './Login.css';
 
 const LogIn = () => {
@@ -20,11 +20,11 @@ const LogIn = () => {
   };
 
   return (
-    <div className='login'>
+    <div>
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
-        <div className='email-container'>
-          <label htmlFor="email">Email: </label>
+        <div>
+          <label htmlFor="email">Email:</label>
           <input
             type="email"
             id="email"
@@ -32,8 +32,8 @@ const LogIn = () => {
             onChange={(event) => setEmail(event.target.value)}
           />
         </div>
-        <div className='password-container'>
-          <label htmlFor="password">Password: </label>
+        <div>
+          <label htmlFor="password">Password:</label>
           <input
             type="password"
             id="password"
@@ -41,21 +41,10 @@ const LogIn = () => {
             onChange={(event) => setPassword(event.target.value)}
           />
         </div>
-        <div className='login-btn'>
-                <Button 
-                className='btns' 
-                button type="submit"
-                buttonStyle='btn--page'
-                buttonSize='btn--large'>
-                    Log-In
-                </Button>
-        </div>
-        {/* <button type="submit">Login</button> */}
+        <button type="submit">Login</button>
       </form>
     </div>
   );
 };
 
 export default LogIn;
-
-

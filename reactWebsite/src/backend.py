@@ -3,7 +3,7 @@ from flask_cors import CORS
 import hashlib
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="*")
 
 users = []
 
@@ -16,8 +16,9 @@ def signup():
     # Hash the password
     password_hash = hashlib.sha256(password.encode()).hexdigest() 
     
-    user = {'name': name, 'email': email, 'password_hash': password}
+    user = {'name': name, 'email': email, 'password_hash': password_hash}
     users.append(user)
+    print(users[0])
     return jsonify({'message': 'User created successfully'})
 
 @app.route('/login', methods=['POST'])
