@@ -106,7 +106,7 @@ if arduino is None or model_used is None or client is None:
 while True:
     try:
         weight = arduino.readline().strip()
-        weight = int(weight) # Change type to integer. This is in grams
+        weight = float(weight) # Change type to integer. This is in grams
 
         if weight > 0:
             camera = cv2.VideoCapture(0) # Opens the camera
