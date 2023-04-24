@@ -38,4 +38,3 @@ def login():
 if __name__ == '__main__':
     app.run()
 
-#print(product_table.table_status)
