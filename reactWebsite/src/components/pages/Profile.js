@@ -4,6 +4,15 @@ import './Profile.css';
 // import {fetchData} from '../AwsFunctions';
 
 function Profile() {
+
+    // const [statistics, setStatistics] = useState(null);
+
+    const handleStatisticsClick = async () => {
+        const response = await fetch('http://127.0.0.1:5000/statistics')
+        const data = await response.json();
+        console.log(data);
+    }
+
     return (
         <div className='profile'>
         {/* <h1 className='services'>SERVICES</h1>; */}
@@ -28,7 +37,8 @@ function Profile() {
                     className='btns' 
                     button type="submit"
                     buttonStyle='btn--outline'
-                    buttonSize='btn--large'>
+                    buttonSize='btn--large'
+                    onClick={handleStatisticsClick}>
                         My Trash AI Statistics
                     </Button>
             </div>
@@ -40,3 +50,4 @@ function Profile() {
     );
 }
 export default Profile;
+
