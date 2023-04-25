@@ -1,3 +1,4 @@
+// dynamoDB client
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -11,20 +12,3 @@ root.render(
 );
 
 reportWebVitals();
-
-
-
-// import { ConfigurationOptions } from 'aws-sdk/lib/config';
-// import * as AWS from 'aws-sdk';
-
-// const configuration = {
-//   region: 'us-east-2',
-//   secretAccessKey: '   ',
-//   accessKeyId: '     '
-// };
-
-// AWS.config.update(configuration);
-
-
-
-

@@ -1,5 +1,7 @@
 import boto3
 import os
+from dotenv import load_dotenv
+load_dotenv(dotenv_path = '../.env')
 #import requests
 from dotenv import load_dotenv
 load_dotenv(dotenv_path = './.env')
