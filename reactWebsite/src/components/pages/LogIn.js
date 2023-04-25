@@ -5,6 +5,7 @@ import './Login.css';
 const LogIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loginSuccessful, setLoginSuccessful] = useState(true);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -17,6 +18,14 @@ const LogIn = () => {
     });
     const data = await response.json();
     console.log(data);
+
+    if (data.message === 'Login successful') {
+      setLoginSuccessful(true);
+      window.location.href = '/profile'; //redirect to profiles page
+    } else {
+      setLoginSuccessful(false);
+      setPassword('');
+    }
   };
 
   return (
@@ -41,6 +50,9 @@ const LogIn = () => {
             onChange={(event) => setPassword(event.target.value)}
           />
         </div>
+        {loginSuccessful ? null : (
+          <p style={{ color: 'red' }}>Incorrect credentials. Please try again.</p>
+        )}
         <button type="submit">Login</button>
       </form>
     </div>
