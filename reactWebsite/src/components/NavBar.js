@@ -11,7 +11,7 @@ function NavBar() {
     const closeMobileMenu = () => setClick(false);
 
     const showButton = () => {
-        if(window.innerWidth <= 960) {
+        if (window.innerWidth <= 960) {
             setButton(false);
         } else {
             setButton(true);
@@ -29,39 +29,39 @@ function NavBar() {
             <nav className='navbar'>
                 <div className='navbar-container'>
                     <Link to='/' className='navbar-logo' onClick={closeMobileMenu}>
-                    SMART TRASH 
-                    <i className= 'fab.fa-typo3'/>
+                        SMART TRASH
+                        <i className='fab.fa-typo3' />
                     </Link>
                     <div className='menu-icon' onClick={handleClick}>
                         <i className={click ? 'fas fa-time' : 'fas fa-bars'} />
                     </div>
                     <ul className={click ? 'nav-menu active' : 'nav-menu'}>
                         <li className='nav-item'>
-                            <Link to ='/' classname='nav-links' onClick={closeMobileMenu}>
+                            <Link to='/' classname='nav-links' onClick={closeMobileMenu}>
                                 Home
                             </Link>
                         </li>
                         <li className='nav-item'>
-                            <Link to ='/services' classname='nav-links' onClick={closeMobileMenu}>
+                            <Link to='/services' classname='nav-links' onClick={closeMobileMenu}>
                                 Info
                             </Link>
                         </li>
                         <li className='nav-item'>
-                            <Link to ='/profile' classname='nav-links' onClick={closeMobileMenu}>
+                            <Link to='/profile' classname='nav-links' onClick={closeMobileMenu}>
                                 Profile
                             </Link>
                         </li>
                         <li className='nav-item'>
-                            <Link to ='/signup' classname='nav-links-mobile' onClick={closeMobileMenu}>
+                            <Link to='/signup' classname='nav-links-mobile' onClick={closeMobileMenu}>
                                 Sign Up
                             </Link>
                         </li>
                     </ul>
-                    {button && <Button buttonStyle='btn--outline'>LOG IN</Button>}
+                    {button && <Button buttonStyle='btn--outline' to='/login'>LOG IN</Button>}
                 </div>
             </nav>
         </>
-        
+
     );
 }
 
