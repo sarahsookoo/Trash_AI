@@ -60,23 +60,3 @@ void loop(){ //instantly repeated execution after setup
   delay(5000);
   delay(3000);
 }
-
-
-
- 
-
-  /*
-  TO BE DONE:
-  - Move the motor back to its original position after initial rotation
-      + Reverse direction (polarity) and move the same amount 
-
-  - Implement serial communication between rasperry pi and arduino 
-    for material type communication
-
-  - Push actuator forward and then pull back
-
-  - Apparnetly there's a library for stepper motors, can I use it 
-
-  - Wire and power all of this
-  */
-
