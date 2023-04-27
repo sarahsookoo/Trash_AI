@@ -6,12 +6,15 @@ import { Link } from 'react-router-dom';
 const STYLES = ['btn--primary', 'btn--outline'];
 const SIZES = ['btn--medium', 'btn--large'];
 
+// In Button.js
+
 export const Button = ({
     children, 
     type, 
     onClick, 
     buttonStyle, 
-    buttonSize
+    buttonSize, 
+    to // new prop
 }) => {
     const checkButtonStyle = STYLES.includes(buttonStyle) 
     ? buttonStyle 
@@ -20,10 +23,10 @@ export const Button = ({
     const checkButtonSize = SIZES.includes(buttonSize) ? buttonSize : SIZES[0]
 
     return (
-        <Link to= '/login' className='btn-mobile'>
+        <Link to={to} className='btn-mobile'>
             <button
             className={`btn ${checkButtonStyle} ${checkButtonSize}`}
-            onClick = {onClick}
+            onClick={onClick}
             type={type}
             >
             {children}
