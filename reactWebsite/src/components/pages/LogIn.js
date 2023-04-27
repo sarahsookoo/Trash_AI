@@ -3,10 +3,14 @@ import '../../App.css';
 import './Login.css';
 
 const LogIn = () => {
+  //Defines 3 variables: email, password and login successful
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginSuccessful, setLoginSuccessful] = useState(true);
 
+  //handle submit function is called when the user submits the login form
+  //sends a POST request to the backend server running on port 5000
+  //with the email and password values as JSON objects
   const handleSubmit = async (event) => {
     event.preventDefault();
     const response = await fetch('http://127.0.0.1:5000/login', {
@@ -16,6 +20,9 @@ const LogIn = () => {
       },
       body: JSON.stringify({ email, password })
     });
+
+    //waits for a response from the server which comes in a message form
+    //could be 'login successful' or 'login failed'
     const data = await response.json();
     console.log(data);
 
@@ -28,6 +35,9 @@ const LogIn = () => {
     }
   };
 
+  //form in html formal with two input fields for email and password
+  //the onsubmit handler is set to the handleSubmit function above
+  //if login successful is false a message in red is rendered
   return (
     <div>
       <h1>Login</h1>
