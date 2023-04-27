@@ -25,7 +25,7 @@ from keras.applications.efficientnet import preprocess_input as preprocess_input
 
 def connect_to_arduino():
     """
-    Connects the Raspberry Pi to an Arduino through a serial port.
+    Connects the Raspberry Pi to an Arduino through a serial port. 9600 is the baud rate, rate of data communication between serial communication.
 
     Returns:
         serial.Serial: The serial connection object for the Arduino.
@@ -39,7 +39,7 @@ def safely_execute_connection_function(func, *args, **kwargs):
     Executes a connection function safely by retrying up to three times if an exception occurs.
 
     Args:
-        func (callable): The connection function to execute.
+        func (the_function): The connection function to execute.
         *args: Variable length argument list for `func`.
         **kwargs: Arbitrary keyword arguments for `func`.
 
@@ -65,10 +65,10 @@ def classify_image(image, model, model_name, is_tflite=False):
         image (numpy.ndarray): The image to classify.
         model (tf.keras.models.Model | tf.lite.Interpreter): The loaded model to use for classification.
         model_name (str): The name of the loaded model.
-        is_tflite (bool): True if the model is a TFLite model; False otherwise.
+        is_tflite (bool): True if the model is a TFLite model; False if not.
 
     Returns:
-        int: The index of the predicted class.
+        int: The index of the predicted class. [0,1,2]
     """
     try:
         img_resized = cv2.resize(image, (224, 224))
@@ -104,7 +104,7 @@ def connect_to_aws():
     Connects the Raspberry Pi to AWS IoT.
 
     Returns:
-        paho.mqtt.client.Client: The MQTT client object for the connection.
+        paho.mqtt.client.Client: The MQTT (Message Queuing Telemetry Transport) client object for the connection. Communicates by subscribing to topics for messages.
     """
 
     client = mqtt.Client(client_id="RaspberryPi")
