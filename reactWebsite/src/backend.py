@@ -11,7 +11,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 
-#connection to aws dynamodb
+#Establish connection to AWS DynamoDB and create resource for User_Accounts table
 dynamo_client  =  boto3.resource(service_name = 'dynamodb',region_name = 'us-east-2',
               aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID'),
               aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY'))
@@ -20,11 +20,17 @@ User_Accounts_Table = dynamo_client.Table('User_Accounts')
 print(User_Accounts_Table.table_status) #should print ACTIVE if successfully connected
 
 #CREATING USER ACCOUNT
+#Create a flask app and set up CORS to allow cross origin resource sharing
 app = Flask(__name__)
 CORS(app, origins="*")
 
 users = []
 
+#This called when the user signs up by submitting the sign up form
+#It extracts the user's name, email, and password
+#The password is hashed using the SHA256 algorithm
+#The user info is added to the user list and to the DynamoDB table
+#returns a success message
 @app.route('/signup', methods=['POST'])
 def signup():
     name = request.json['name']
@@ -42,6 +48,9 @@ def signup():
     User_Accounts_Table.put_item(Item = {'Username': name, 'email': email,'Password': password_hash})
     return jsonify({'message': 'User created successfully'})
 
+#This function is called when the user presses submit on the login form
+#It takes the user input and before checking the db, it uses the SHA256 algorithm to has the password
+#The function queries the table for matching records and if found, there is a success message
 @app.route('/login', methods=['POST'])
 def login():
     email = request.json['email']
