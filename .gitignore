@@ -1,2 +1,5 @@
 # ignore env file 
 .env
+
+#ignore avgs photo
+avgs.png
