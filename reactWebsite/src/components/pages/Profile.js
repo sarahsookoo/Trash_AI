@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
-import { Button } from '../Button';
+import React, { useState, useEffect } from 'react';
+//import { Button } from '../Button';
 import './Profile.css';
+import avgs from './avgs.jpg'
 
 function Profile() {
 
-    const [plotPath, setPlotPath] = useState(null);
+    // const [plotPath, setPlotPath] = useState(null);
 
-    const handleStatisticsClick = async () => {
-        const response = await fetch('http://127.0.0.1:5000/statistics');
-        const data = await response.json();
-        setPlotPath(data.plot_path);
-    }
+    // useEffect(() => {
+    //     console.log(plotPath);
+    // }, [plotPath]);
+
+    // const handleStatisticsClick = async () => {
+    //     const response = await fetch('http://127.0.0.1:5000/statistics');
+    //     const data = await response.json();
+    //     console.log(data)
+    //     setPlotPath(data.plot_path);
+    // }
 
     return (
         <div className='profile'>
@@ -27,7 +33,10 @@ function Profile() {
             <div className='email'> 
                 Email:
             </div>
-            <div className='stats-btn'>
+            <div> 
+                <img src= {avgs} alt='Trash AI Statistics' /> 
+                </div>
+            {/* <div className='stats-btn'>
                 <Button 
                     className='btns' 
                     button type="submit"
@@ -41,7 +50,7 @@ function Profile() {
                 <div className='stats-plot'>
                     <img src={plotPath} alt='Trash AI Statistics' />
                 </div>
-            }
+            } */}
         </div>
     );
 }
