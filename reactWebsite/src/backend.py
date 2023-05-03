@@ -96,8 +96,12 @@ def login():
         for x in Paper_Items:
             Paper_Weights += x['Weight'] #add up the weight of all paper items
 
-        Paper_Avg_Weight = Paper_Weights/Amount_of_Paper #divide total weight by amount of paper items for average
-        #print(Paper_Avg_Weight) #should be 25
+        Paper_Avg_Weight = 0
+
+        if Amount_of_Paper == 0:
+            Paper_Avg_Weight = 0
+        else:
+            Paper_Avg_Weight = Paper_Weights/Amount_of_Paper #divide total weight by amount of paper items for average
         
         ### PLASTIC DATA ###
         plastic_data = Trash_Stats.scan(Select = "ALL_ATTRIBUTES",
@@ -110,8 +114,13 @@ def login():
 
         for x in Plastic_Items:
             Plastic_Weights += x['Weight'] #add up the weight of all plastic items
-
-        Plastic_Avg_Weight = Plastic_Weights/Amount_of_Plastic #divide total weight by amount of plastic items for average
+        
+        Plastic_Avg_Weight = 0
+        
+        if Amount_of_Plastic == 0:
+            Plastic_Avg_Weight = 0
+        else:
+            Plastic_Avg_Weight = Plastic_Weights/Amount_of_Plastic #divide total weight by amount of plastic items for average
         #print(Plastic_Avg_Weight) #should be 25
 
         ### REGULAR TRASH DATA ###
@@ -126,8 +135,12 @@ def login():
         for x in Regular_Trash_Items:
             Regular_Trash_Weights += x['Weight'] #add up the weight of all trash items
 
-        Regular_Trash_Avg_Weight = Regular_Trash_Weights/Amount_of_Regular_Trash #divide total weight by amount of trash items for average
-        #print(Regular_Trash_Avg_Weight) #should be 25
+        Regular_Trash_Avg_Weight = 0
+
+        if Amount_of_Regular_Trash == 0:
+            Regular_Trash_Avg_Weight = 0
+        else:
+            Regular_Trash_Avg_Weight = Regular_Trash_Weights/Amount_of_Regular_Trash #divide total weight by amount of trash items for average
 
         Types_of_Trash = ['Paper', 'Plastic', 'Regular Trash']
         avg_weights = [Paper_Avg_Weight, Plastic_Avg_Weight, Regular_Trash_Avg_Weight]
