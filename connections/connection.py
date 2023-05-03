@@ -23,6 +23,7 @@ print(product_table.table_status) #should print ACTIVE if successfully connected
 today = date.today()
 today_string = today.strftime('%m/%d/%Y')
 
+
 # product_table.put_item(Item = {'Type_of_Trash':'Paper',"Weight": 20,"Date": today_string})
 # product_table.put_item(Item = {'Type_of_Trash':'Paper',"Weight": 30,"Date": today_string})
 # product_table.put_item(Item = {'Type_of_Trash':'Plastic',"Weight": 20,"Date": today_string})
