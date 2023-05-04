@@ -183,7 +183,14 @@ while True:
             camera.release()       
 
             if picture_taken:
-                cv2.imwrite('home/yaya/Projects/Trash_AI/photo.jpg', picture)
+                try:
+                    is_picture_savedd = cv2.imwrite('home/yaya/Projects/Trash_AI/photo.jpg', picture)
+                    if not is_picture_savedd:
+                        print("Failed to save the image")
+                except Exception as e:
+                    print(f"Error: {e}")
+
+                print("Picture saved!")
                 print('Picture taken')
                 # Class index is an integer value. 0 = Plastic, 1 = Paper, 2 = Trash
                 class_index = classify_image(picture, model, "mobilenetv2", False) # This MUST match the path of model used
