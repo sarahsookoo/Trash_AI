@@ -174,7 +174,6 @@ if client is None:
 
 while True:
     try:
-        print("Waiting for weight from arduino...")
         weight = read_weight_from_arduino(arduino_serial=arduino)
 
         if weight is not None:
@@ -204,6 +203,7 @@ while True:
                 client.publish("TrashAI", json.dumps(trash_data), qos=1)
                 print(f"Sent message {json.dumps(trash_data)} to topic TrashAI")
                 sleep(10)
+                print("Waiting for weight from Arduino...")
             else:
                 print("Failed to capture an image")
     except Exception as e:
