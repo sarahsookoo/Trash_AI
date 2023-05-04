@@ -176,9 +176,10 @@ if client is None:
 while True:
     try:
         weight = read_weight_from_arduino(arduino_serial=arduino)
-        print("The weiht from the Arduino is:", weight)
+        
 
         if weight is not None:
+            print("The weight from the Arduino is:", weight)
             camera = cv2.VideoCapture(0)
             picture_taken, picture = camera.read()
             camera.release()       
@@ -202,13 +203,13 @@ while True:
                 
                 client.publish("TrashAI", json.dumps(trash_data), qos=1)
                 print(f"Sent message {json.dumps(trash_data)} to topic TrashAI")
-                
+                sleep(10000)
             else:
                 print("Failed to capture an image")
     except Exception as e:
             print(f"Execution failed for reason: {str(e)}")
 
-    sleep(10000)
+    
 
 
 """
