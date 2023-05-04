@@ -35,6 +35,14 @@ def connect_to_arduino():
     arduino_serial.reset_input_buffer()
     return arduino_serial
 
+def read_weight_from_arduino(arduino_serial):
+    if arduino_serial.inWaiting() > 0:
+        data = arduino_serial.readline().decode().strip()
+        return float(data)
+    else:
+        return None
+    
+
 def safely_execute_connection_function(func, *args, **kwargs):
     """
     Executes a connection function safely by retrying up to three times if an exception occurs.
@@ -167,10 +175,10 @@ if model is None or client is None:
 
 while True:
     try:
-        weight = arduino.readline().strip()
-        weight = float(weight) # Change type to integer. This is in grams
+        weight = read_weight_from_arduino(arduino_serial=arduino)
         print("The weiht from the Arduino is:", weight)
-        if weight > 0:
+
+        if weight is not None:
             camera = cv2.VideoCapture(0)
             picture_taken, picture = camera.read()
             camera.release()       
@@ -181,12 +189,11 @@ while True:
                 class_index = classify_image(picture, model, "mobilenetv2", False) # This MUST match the path of model used
                 class_label = ['plastic', 'paper', 'trash'][class_index]
 
-               # arduino.write(str(class_index).encode())
+                arduino.write(str(class_index).encode())
                 print(f"Predicted class: {class_label}")
 
                 # Get current date
                 date = datetime.now().strftime('%m-%d-%Y')
-                weight = 3
                 trash_data = {
                     "Type_of_Trash": class_label,
                     "Weight": weight,
