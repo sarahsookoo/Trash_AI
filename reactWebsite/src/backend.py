@@ -86,7 +86,7 @@ def login():
         ### PAPER DATA ###
 
         paper_data = Trash_Stats.scan(Select = "ALL_ATTRIBUTES",
-                    FilterExpression = Attr('Type_of_Trash').eq('Paper'))
+                    FilterExpression = Attr('Type_of_Trash').eq('paper'))
 
         Paper_Items = paper_data['Items'] #all attributes that are paper
         Amount_of_Paper = len(Paper_Items) #amount of attributes
@@ -105,7 +105,7 @@ def login():
         
         ### PLASTIC DATA ###
         plastic_data = Trash_Stats.scan(Select = "ALL_ATTRIBUTES",
-                FilterExpression = Attr('Type_of_Trash').eq('Plastic'))
+                FilterExpression = Attr('Type_of_Trash').eq('plastic'))
 
         Plastic_Items = plastic_data['Items'] #all attributes that are plastic
         Amount_of_Plastic = len(Plastic_Items) #amount of attributes
