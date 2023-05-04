@@ -169,7 +169,7 @@ while True:
     try:
         weight = arduino.readline().strip()
         weight = float(weight) # Change type to integer. This is in grams
-
+        print("The weiht from the Arduino is:", weight)
         if weight > 0:
             camera = cv2.VideoCapture(0)
             picture_taken, picture = camera.read()
