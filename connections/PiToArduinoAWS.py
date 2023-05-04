@@ -165,11 +165,11 @@ def load_local_model(model_to_load):
         return load_model(model_to_load), False
 
 # Start the connections before loop
-model = load_local_model('/home/yaya/Projects/Trash_AI/models/mobileNetV2.h5')
+# model = load_local_model('/home/yaya/Projects/Trash_AI/models/mobileNetV2.h5')
 arduino = safely_execute_connection_function(connect_to_arduino)
 client = safely_execute_connection_function(connect_to_aws)
 print("All connections succesfful!")
-if model is None or client is None:
+if client is None:
     print("Error: Connection. Exiting the program.")
     exit(1)
 
