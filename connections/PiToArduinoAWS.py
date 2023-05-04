@@ -165,7 +165,7 @@ def load_local_model(model_to_load):
         return load_model(model_to_load), False
 
 # Start the connections before loop
-# model = load_local_model('/home/yaya/Projects/Trash_AI/models/mobileNetV2.h5')
+model = load_local_model('/home/yaya/Projects/Trash_AI/models/mobileNetV2.h5')
 arduino = safely_execute_connection_function(connect_to_arduino)
 client = safely_execute_connection_function(connect_to_aws)
 print("All connections succesfful!")
@@ -176,16 +176,15 @@ if client is None:
 while True:
     try:
         weight = read_weight_from_arduino(arduino_serial=arduino)
-        
 
         if weight is not None:
             print("The weight from the Arduino is:", weight)
             camera = cv2.VideoCapture(0)
             picture_taken, picture = camera.read()
             camera.release()       
-            weight_to_send_to_pie = 1
-            arduino.write(str(weight_to_send_to_pie).encode())
+
             if picture_taken:
+                cv2.imwrite('home/yaya/Projects/Trash_AI/photo.jpg', picture)
                 print('Picture taken')
                 # Class index is an integer value. 0 = Plastic, 1 = Paper, 2 = Trash
                 class_index = classify_image(picture, model, "mobilenetv2", False) # This MUST match the path of model used
