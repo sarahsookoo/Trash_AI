@@ -183,7 +183,8 @@ while True:
             camera = cv2.VideoCapture(0)
             picture_taken, picture = camera.read()
             camera.release()       
-            arduino.write((1).encode())
+            weight_to_send_to_pie = 1
+            arduino.write(str(weight_to_send_to_pie).encode())
             if picture_taken:
                 print('Picture taken')
                 # Class index is an integer value. 0 = Plastic, 1 = Paper, 2 = Trash
