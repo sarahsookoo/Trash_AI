@@ -183,12 +183,8 @@ while True:
             camera.release()       
 
             if picture_taken:
-                try:
-                    is_picture_savedd = cv2.imwrite('home/yaya/Projects/Trash_AI/photo.jpg', picture)
-                    if not is_picture_savedd:
-                        print("Failed to save the image")
-                except Exception as e:
-                    print(f"Error: {e}")
+                print("Type of image:", type(picture))
+                print("Shape of image:", picture.shape)
 
                 print("Picture saved!")
                 print('Picture taken')
