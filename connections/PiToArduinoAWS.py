@@ -174,26 +174,24 @@ if client is None:
 
 while True:
     try:
+        print("Waiting for weight from arduino...")
         weight = read_weight_from_arduino(arduino_serial=arduino)
 
         if weight is not None:
-            print("The weight from the Arduino is:", weight)
+            print("The weight from the Arduino is: ", weight)
             camera = cv2.VideoCapture(0)
             picture_taken, picture = camera.read()
             camera.release()       
 
             if picture_taken:
-                print("Type of image:", type(picture))
-                print("Shape of image:", picture.shape)
-
-                print("Picture saved!")
                 print('Picture taken')
                 # Class index is an integer value. 0 = Plastic, 1 = Paper, 2 = Trash
                 class_index = classify_image(picture, model, "mobilenetv2", False) # This MUST match the path of model used
                 class_label = ['plastic', 'paper', 'trash'][class_index]
+                print(f"Predicted class: {class_label}")
 
                 arduino.write(str(class_index).encode())
-                print(f"Predicted class: {class_label}")
+                print("Sent class index to arduino: ", class_index)
 
                 # Get current date
                 date = datetime.now().strftime('%m-%d-%Y')
@@ -205,7 +203,7 @@ while True:
                 
                 client.publish("TrashAI", json.dumps(trash_data), qos=1)
                 print(f"Sent message {json.dumps(trash_data)} to topic TrashAI")
-                sleep(10000)
+                sleep(10)
             else:
                 print("Failed to capture an image")
     except Exception as e:
