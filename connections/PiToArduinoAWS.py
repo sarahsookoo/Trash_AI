@@ -21,6 +21,7 @@ import numpy as np
 from keras.applications.vgg16 import preprocess_input as preprocess_input_vgg16
 from keras.applications.mobilenet_v2 import preprocess_input as preprocess_input_mobilenetv2
 from keras.applications.efficientnet import preprocess_input as preprocess_input_efficientnet
+from keras.models import load_model
 
 
 def connect_to_arduino():
@@ -48,12 +49,15 @@ def safely_execute_connection_function(func, *args, **kwargs):
     """
     for attempt in range(3):
         try:
-            return func(*args, **kwargs)
+            result = func(*args, **kwargs)
+            return result
+            
         except Exception as e:
             if attempt < 2:
                 print(f"Retrying {func.__name__}... (Attempt number {attempt + 1})")
-    print(f"Failed running {func.__name__} after 3 attempts. ERROR: {e}")
-    return None
+            else:
+                print(f"Failed running {func.__name__} after 3 attempts. ERROR: {e}")
+                return None
 
 
 
@@ -92,7 +96,10 @@ def classify_image(image, model, model_name, is_tflite=False):
             model.invoke()
             prediction = model.get_tensor(output_details[0]['index'])
         else:
-            prediction = model.predict(img_expanded)
+            
+            model_from_tuple = model[0]
+            
+            prediction = model_from_tuple.predict(img_expanded)
         
         return np.argmax(prediction)
     except Exception as e:
@@ -112,7 +119,7 @@ def connect_to_aws():
     # Load the certificate files for the connection
     ca_cert = "/home/yaya/certs/AmazonRootCA1.pem"
     client_cert = "/home/yaya/certs/5e24338b700a1626b8805c8be445981c590b0eaf20a4a5f37f0f1bf2517c417b-certificate.pem.crt"
-    client_key = "/home/yaya/certs/5e24338b700a1626b8805c8be445981c590b0eaf20a4a5f37f0f1bf2517c417b-private.pem.key"
+    client_key = "/home/yaya/certs/aa35ed2c5af8104858409803d3d1eef7b8e7cc9d912b71df328b1b6a6f09b305-private.pem.key"
     client.tls_set(ca_certs=ca_cert, certfile=client_cert, keyfile=client_key, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
     
     # Set up the connection parameters
@@ -120,18 +127,18 @@ def connect_to_aws():
     data_port = 8883
     
     # Lambda anonymous functions. Cleaner than having the callback on_connect functions
-    client.on_connect = lambda responseCode: print("Connected to AWS with result code "+str(responseCode))
-    client.on_message = lambda message: print("Received message '" + str(message.payload) + "' on topic '" + message.topic + "' with QoS " + str(message.qos))
+   # client.on_connect = lambda responseCode: print("Connected to AWS with result code "+str(responseCode))
+  #  client.on_message = lambda message: print("Received message '" + str(message.payload) + "' on topic '" + message.topic + "' with QoS " + str(message.qos))
 
     # Connect the client to the endpoint
     client.connect(data_endpoint, data_port, keepalive=60)
-
+    print("Connected to AWS!")
     # Start the MQTT client 
     client.loop_start()
     return client
 
 
-def load_model(model_to_load):
+def load_local_model(model_to_load):
     """
     Loads a trained model.
 
@@ -144,17 +151,17 @@ def load_model(model_to_load):
     if model_to_load.endswith('tflite'): 
         lite_interpreter = tf.lite.Interpreter(model_path=model_to_load)
         lite_interpreter.allocate_tensors()
+        print("Model loaded")
         return lite_interpreter, True
     else:
-        return tf.keras.models.load_models(model_to_load), False
+        return load_model(model_to_load), False
 
-
+model = load_local_model('/home/yaya/Projects/Trash_AI/models/mobileNetV2.h5')
 # Start the connections before loop
-arduino = safely_execute_connection_function(connect_to_arduino)
-model_used, is_tfLite = safely_execute_connection_function(load_model, '/home/yaya/models/mobileNetV2') # Change the string path to test different models
+arduino = connect_to_arduino
 client = safely_execute_connection_function(connect_to_aws)
 
-if arduino is None or model_used is None or client is None:
+if model is None or client is None:
     print("Error: Connection. Exiting the program.")
     exit(1)
 
@@ -164,34 +171,37 @@ while True:
         weight = float(weight) # Change type to integer. This is in grams
 
         if weight > 0:
-            camera = cv2.VideoCapture(0) # Opens the camera
-            picture_taken, picture = camera.read() # ret is True/False if the camera taken was succesful
-            camera.release() # Close the camera
+            camera = cv2.VideoCapture(0)
+            picture_taken, picture = camera.read()
+            camera.release()       
 
             if picture_taken:
-
+                print('Picture taken')
                 # Class index is an integer value. 0 = Plastic, 1 = Paper, 2 = Trash
-                class_index = classify_image(picture, model_used, "vgg16", is_tfLite) # This MUST match the path of model used
+                class_index = classify_image(picture, model, "mobilenetv2", False) # This MUST match the path of model used
                 class_label = ['plastic', 'paper', 'trash'][class_index]
 
-                arduino.write(str(class_index).encode())
+               # arduino.write(str(class_index).encode())
                 print(f"Predicted class: {class_label}")
 
                 # Get current date
-                date = datetime.now().strftime('%Y-%m-%d')
+                date = datetime.now().strftime('%m-%d-%Y')
+                weight = 3
                 trash_data = {
-                    "Weight": weight,
                     "Type_of_Trash": class_label,
+                    "Weight": weight,
                     "Date": date
                 }
+                
                 client.publish("TrashAI", json.dumps(trash_data), qos=1)
                 print(f"Sent message {json.dumps(trash_data)} to topic TrashAI")
+                
             else:
                 print("Failed to capture an image")
     except Exception as e:
             print(f"Execution failed for reason: {str(e)}")
 
-    sleep(1)
+    sleep(10000)
 
 
 """
