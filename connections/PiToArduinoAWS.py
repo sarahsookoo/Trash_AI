@@ -8,7 +8,6 @@ Handles sending data back to the Arduino (to move the actuator)
 Essentially this is the main script thats running oon the Pi as an infinite loop. 
 !!! HAS NOT BEEN TRESTED YET !!!
 """
-
 import tensorflow as tf
 from time import sleep
 import serial
