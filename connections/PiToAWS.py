@@ -109,7 +109,7 @@ def classify_image(image, model, model_name, is_tflite=False):
             
             prediction = model_from_tuple.predict(img_expanded)
         
-        return np.argmax(prediction)
+        return np.argmax(prediction), prediction[0]
     except Exception as e:
         print(f"Error predicting the class: {e}")
 
@@ -149,7 +149,7 @@ def upload_image_to_S3(classification, date, bucket_name, image_to_upload):
         return
     else:
         image_io_buffer = io.BytesIO(buffer)
-        image_file_name = ""
+        image_file_name = f"{classification}_{date}.jpg"
         s3.upload_fileobj(image_io_buffer, bucket_name, image_file_name, ExtraArgs={'ContentType': 'image/jpeg'})
 
 
@@ -197,13 +197,16 @@ while True:
                 print('Picture taken')
                 
                 # Class index is an integer value. 0 = Plastic, 1 = Paper, 2 = Trash
-                class_index = classify_image(picture, model, "mobilenetv2", False) # This MUST match the path of model used
-                class_label = ['plastic', 'paper', 'trash'][class_index]
+                class_index, class_probability = classify_image(picture, model, "mobilenetv2", False) # This MUST match the path of model used
+                class_names = ['plastic', 'paper', 'trash']
+                class_label = class_names[class_index]
                 print(f"Predicted class: {class_label}")
 
+                for name, probability in zip(class_names, class_probability):
+                    print(f'{probability * 100:.2f}% {name}')
 
                 # Get current date
-                date = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+                date = datetime.now().strftime("%m-%d-%Y-%H:%M:%S")
                 trash_data = {
                     "Type_of_Trash": class_label,
                     "Weight": weight,
@@ -213,6 +216,7 @@ while True:
                 client.publish("TrashAI", json.dumps(trash_data), qos=1)
                 print(f"Sent message {json.dumps(trash_data)} to topic TrashAI")
                 upload_image_to_S3(class_label,date, "trash-images", picture)
+                print("Uploaded Image to S3!")
                 sleep(10)
                 print("Waiting for Dummy weight from Arduino...")
             else:
