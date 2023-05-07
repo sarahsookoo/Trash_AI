@@ -11,12 +11,14 @@ Essentially this is the main script thats running oon the Pi as an infinite loop
 import tensorflow as tf
 from time import sleep
 import serial
+import io
 import paho.mqtt.client as mqtt
 import ssl
 import json
 from datetime import datetime
 import cv2
 import numpy as np
+import boto3
 from keras.applications.vgg16 import preprocess_input as preprocess_input_vgg16
 from keras.applications.mobilenet_v2 import preprocess_input as preprocess_input_mobilenetv2
 from keras.applications.efficientnet import preprocess_input as preprocess_input_efficientnet
@@ -108,7 +110,7 @@ def classify_image(image, model, model_name, is_tflite=False):
             
             prediction = model_from_tuple.predict(img_expanded)
         
-        return np.argmax(prediction)
+        return np.argmax(prediction), prediction[0]
     except Exception as e:
         print(f"Error predicting the class: {e}")
 
@@ -121,6 +123,7 @@ def connect_to_aws():
         paho.mqtt.client.Client: The MQTT (Message Queuing Telemetry Transport) client object for the connection. Communicates by subscribing to topics for messages.
     """
 
+    # Create the client associated 'thing'
     client = mqtt.Client(client_id="RaspberryPi")
 
     # Load the certificate files for the connection
@@ -132,17 +135,24 @@ def connect_to_aws():
     # Set up the connection parameters
     data_endpoint = "a3cw4o4ei9rop7-ats.iot.us-east-2.amazonaws.com"
     data_port = 8883
-    
-    # Lambda anonymous functions. Cleaner than having the callback on_connect functions
-   # client.on_connect = lambda responseCode: print("Connected to AWS with result code "+str(responseCode))
-  #  client.on_message = lambda message: print("Received message '" + str(message.payload) + "' on topic '" + message.topic + "' with QoS " + str(message.qos))
 
     # Connect the client to the endpoint
     client.connect(data_endpoint, data_port, keepalive=60)
     print("Connected to AWS!")
+
     # Start the MQTT client 
     client.loop_start()
     return client
+
+def upload_image_to_S3(classification, date, bucket_name, image_to_upload): 
+    s3 = boto3.client('s3')
+    success, buffer = cv2.imencode(".jpg", image_to_upload)
+    if not success:
+        return
+    else:
+        image_io_buffer = io.BytesIO(buffer)
+        image_file_name = f"{classification}_{date}.jpg"
+        s3.upload_fileobj(image_io_buffer, bucket_name, image_file_name, ExtraArgs={'ContentType': 'image/jpeg'})
 
 
 def load_local_model(model_to_load):
@@ -167,10 +177,12 @@ def load_local_model(model_to_load):
 model = load_local_model('/home/yaya/Projects/Trash_AI/models/mobileNetV2.h5')
 arduino = safely_execute_connection_function(connect_to_arduino)
 client = safely_execute_connection_function(connect_to_aws)
-print("All connections succesfful!")
+
 if client is None:
     print("Error: Connection. Exiting the program.")
     exit(1)
+
+print("All connections succesfful!")
 
 while True:
     try:
@@ -179,21 +191,29 @@ while True:
         if weight is not None:
             print("The weight from the Arduino is: ", weight)
             camera = cv2.VideoCapture(0)
+            camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+            camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
             picture_taken, picture = camera.read()
             camera.release()       
 
             if picture_taken:
                 print('Picture taken')
                 # Class index is an integer value. 0 = Plastic, 1 = Paper, 2 = Trash
-                class_index = classify_image(picture, model, "mobilenetv2", False) # This MUST match the path of model used
-                class_label = ['plastic', 'paper', 'trash'][class_index]
+                class_index, class_probability = classify_image(picture, model, "mobilenetv2", False) # This MUST match the path of model used
+                class_names = ['plastic', 'paper', 'trash']
+                class_label = class_names[class_index]
                 print(f"Predicted class: {class_label}")
+
+                # Prints All three % probabilities for the picture
+                for name, probability in zip(class_names, class_probability):
+                    print(f'{probability * 100:.2f}% {name}')
+
 
                 arduino.write(str(class_index).encode())
                 print("Sent class index to arduino: ", class_index)
 
-                # Get current date
-                date = datetime.now().strftime('%m-%d-%Y')
+                # Current time. Used as S3 filename and DynamoDB sortKey
+                date = datetime.now().strftime("%m-%d-%Y-%H:%M:%S")
                 trash_data = {
                     "Type_of_Trash": class_label,
                     "Weight": weight,
@@ -202,6 +222,8 @@ while True:
                 
                 client.publish("TrashAI", json.dumps(trash_data), qos=1)
                 print(f"Sent message {json.dumps(trash_data)} to topic TrashAI")
+                upload_image_to_S3(class_label,date, "trash-images", picture)
+                print("Uploaded Image to S3!")
                 sleep(10)
                 print("Waiting for weight from Arduino...")
             else:

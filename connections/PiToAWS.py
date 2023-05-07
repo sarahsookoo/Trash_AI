@@ -18,29 +18,6 @@ from keras.applications.efficientnet import preprocess_input as preprocess_input
 from keras.models import load_model
 
 
-class PiCameraVideoCapture:
-    def __init__(self, resolution=(1920, 1080)):
-        self.camera = picamera.PiCamera()
-        self.camera.resolution = resolution
-
-    def read(self):
-        with picamera.array.PiRGBArray(self.camera) as stream:
-            self.camera.capture(stream, format='bgr')
-            frame = stream.array
-        return True, frame
-
-    def set(self, prop_id, value):
-        if prop_id == cv2.CAP_PROP_FRAME_WIDTH:
-            self.camera.resolution = (int(value), self.camera.resolution[1])
-        elif prop_id == cv2.CAP_PROP_FRAME_HEIGHT:
-            self.camera.resolution = (self.camera.resolution[0], int(value))
-
-    def release(self):
-        self.camera.close()
-
-
-
-
 def safely_execute_connection_function(func, *args, **kwargs):
     """
     Executes a connection function safely by retrying up to three times if an exception occurs.
