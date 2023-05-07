@@ -12,8 +12,6 @@ import cv2
 import numpy as np
 import io
 import boto3
-import picamera
-import picamera.array
 from keras.applications.vgg16 import preprocess_input as preprocess_input_vgg16
 from keras.applications.mobilenet_v2 import preprocess_input as preprocess_input_mobilenetv2
 from keras.applications.efficientnet import preprocess_input as preprocess_input_efficientnet
