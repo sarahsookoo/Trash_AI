@@ -184,7 +184,7 @@ while True:
         weight = 0
         if weight == 0:
             print("The Dummy weight is: ", weight)
-            camera = PiCameraVideoCapture()
+            camera = cv2.VideoCapture(0)
             camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
             camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
