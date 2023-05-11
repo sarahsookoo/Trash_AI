@@ -6,7 +6,10 @@ function Services() {
         <div>
         {/* <h1 className='services'>SERVICES</h1>; */}
         <video src='/vid3.mp4' autoPlay loop muted />
-        <h1>Info</h1>
+        
+            <h1>Info</h1>
+        
+       
         
         <div className="body-header">
         <h1>How does Trash AI work? </h1>
