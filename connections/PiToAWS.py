@@ -1,48 +1,22 @@
 """
-This is the main driver code for the Pi.
-Handles the connection between the arduino to Pi.
-Handles the process of taking an image, processing it and running it through the model(s)
-Handles the data being sent to AWS (the IoTPublish.py does this too but htat was a PoC script)
-Handles sending data back to the Arduino (to move the actuator)
-
-Essentially this is the main script thats running oon the Pi as an infinite loop. 
-!!! HAS NOT BEEN TRESTED YET !!!
+Copy of the driver coede without the arduino logic. 
 """
 import tensorflow as tf
 from time import sleep
 import serial
-import io
 import paho.mqtt.client as mqtt
 import ssl
 import json
 from datetime import datetime
 import cv2
 import numpy as np
+import io
 import boto3
 from keras.applications.vgg16 import preprocess_input as preprocess_input_vgg16
 from keras.applications.mobilenet_v2 import preprocess_input as preprocess_input_mobilenetv2
 from keras.applications.efficientnet import preprocess_input as preprocess_input_efficientnet
 from keras.models import load_model
 
-
-def connect_to_arduino():
-    """
-    Connects the Raspberry Pi to an Arduino through a serial port. 9600 is the baud rate, rate of data communication between serial communication.
-
-    Returns:
-        serial.Serial: The serial connection object for the Arduino.
-    """
-    arduino_serial = serial.Serial('/dev/ttyACM0', 9600)
-    arduino_serial.reset_input_buffer()
-    return arduino_serial
-
-def read_weight_from_arduino(arduino_serial):
-    if arduino_serial.inWaiting() > 0:
-        data = arduino_serial.readline().decode().strip()
-        return float(data)
-    else:
-        return None
-    
 
 def safely_execute_connection_function(func, *args, **kwargs):
     """
@@ -123,7 +97,6 @@ def connect_to_aws():
         paho.mqtt.client.Client: The MQTT (Message Queuing Telemetry Transport) client object for the connection. Communicates by subscribing to topics for messages.
     """
 
-    # Create the client associated 'thing'
     client = mqtt.Client(client_id="RaspberryPi")
 
     # Load the certificate files for the connection
@@ -135,14 +108,14 @@ def connect_to_aws():
     # Set up the connection parameters
     data_endpoint = "a3cw4o4ei9rop7-ats.iot.us-east-2.amazonaws.com"
     data_port = 8883
-
+    
     # Connect the client to the endpoint
     client.connect(data_endpoint, data_port, keepalive=60)
     print("Connected to AWS!")
-
     # Start the MQTT client 
     client.loop_start()
     return client
+
 
 def upload_image_to_S3(classification, date, bucket_name, image_to_upload): 
     s3 = boto3.client('s3')
@@ -175,7 +148,6 @@ def load_local_model(model_to_load):
 
 # Start the connections before loop
 model = load_local_model('/home/yaya/Projects/Trash_AI/models/mobileNetV2.h5')
-arduino = safely_execute_connection_function(connect_to_arduino)
 client = safely_execute_connection_function(connect_to_aws)
 
 if client is None:
@@ -186,33 +158,29 @@ print("All connections succesfful!")
 
 while True:
     try:
-        weight = read_weight_from_arduino(arduino_serial=arduino)
-
-        if weight is not None:
-            print("The weight from the Arduino is: ", weight)
+        weight = 0
+        if weight == 0:
+            print("The Dummy weight is: ", weight)
             camera = cv2.VideoCapture(0)
             camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
             camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
             picture_taken, picture = camera.read()
             camera.release()       
 
             if picture_taken:
                 print('Picture taken')
+                
                 # Class index is an integer value. 0 = Plastic, 1 = Paper, 2 = Trash
                 class_index, class_probability = classify_image(picture, model, "mobilenetv2", False) # This MUST match the path of model used
                 class_names = ['plastic', 'paper', 'trash']
                 class_label = class_names[class_index]
                 print(f"Predicted class: {class_label}")
 
-                # Prints All three % probabilities for the picture
                 for name, probability in zip(class_names, class_probability):
                     print(f'{probability * 100:.2f}% {name}')
 
-
-                arduino.write(str(class_index).encode())
-                print("Sent class index to arduino: ", class_index)
-
-                # Current time. Used as S3 filename and DynamoDB sortKey
+                # Get current date
                 date = datetime.now().strftime("%m-%d-%Y-%H:%M:%S")
                 trash_data = {
                     "Type_of_Trash": class_label,
@@ -225,21 +193,8 @@ while True:
                 upload_image_to_S3(class_label,date, "trash-images", picture)
                 print("Uploaded Image to S3!")
                 sleep(10)
-                print("Waiting for weight from Arduino...")
+                print("Waiting for Dummy weight from Arduino...")
             else:
                 print("Failed to capture an image")
     except Exception as e:
             print(f"Execution failed for reason: {str(e)}")
-
-    
-
-
-"""
-Sources
-Pi with Arduino USB: https://www.tomshardware.com/how-to/use-raspberry-pi-with-arduino
-What is 9600 and why? https://www.programmingelectronics.com/serial-begin-9600/.
-Pi to arduino AND back - https://roboticsbackend.com/raspberry-pi-arduino-serial-communication/#Raspberry_Pi_Software_setup
-HX711 setup (WITHOUT ARDUINO) - https://github.com/tatobari/hx711py/blob/master/example.py
-Using the model to detect Images - https://stackoverflow.com/questions/50443411/how-to-load-a-tflite-model-in-script
-Image preprocessing - https://stackoverflow.com/questions/66426381/what-is-the-use-of-expand-dims-in-image-processing
-"""
