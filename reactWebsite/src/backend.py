@@ -12,9 +12,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 #Establish connection to AWS DynamoDB and create resource for User_Accounts table
-dynamo_client  =  boto3.resource(service_name = 'dynamodb',region_name = 'us-east-2',
-              aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID'),
-              aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY'))
+dynamo_client  =  boto3.resource(service_name = 'dynamodb',region_name = 'us-east-2', aws_access_key_id = 'AKIAT5AFYW5OEJTBIYBJ', aws_secret_access_key= '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')
+            #   aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID'),
+            #   aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY'))
 
 User_Accounts_Table = dynamo_client.Table('User_Accounts')
 print(User_Accounts_Table.table_status) #should print ACTIVE if successfully connected
@@ -75,9 +75,11 @@ def login():
         #redirect user to profiles page
     else:
 
-        dynamo_client  =  boto3.resource(service_name = 'dynamodb',region_name = 'us-east-2',
-                aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID'),
-                aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY'))
+        # dynamo_client  =  boto3.resource(service_name = 'dynamodb',region_name = 'us-east-2',
+        #         aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID'),
+        #         aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY'))
+        dynamo_client  =  boto3.resource(service_name = 'dynamodb',region_name = 'us-east-2', aws_access_key_id = 'AKIAT5AFYW5OEJTBIYBJ', aws_secret_access_key= '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')
+
     
         Trash_Stats = dynamo_client.Table('Trash_AI')
         
@@ -153,7 +155,7 @@ def login():
         plt.xlabel('Type of Trash')
         plt.ylabel('Weight of Trash (grams)')
         #plt.show()
-        plot_path = './src/components/pages/avgs.jpg'  # Change this to a valid path
+        plot_path = './components/pages/avgs.jpg'  # Change this to a valid path
         plt.savefig(plot_path)
 
         return jsonify({'message': 'Login successful'})
@@ -249,4 +251,3 @@ def login():
 
 if __name__ == '__main__':
     app.run()
-
