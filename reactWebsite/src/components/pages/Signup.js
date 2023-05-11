@@ -21,7 +21,11 @@ const Signup = () => {
     });
     const data = await response.json();
     console.log(data);
-  };
+
+    if (data.message === 'User created successfully') {
+      window.location.href = '/login'; //redirect to login page
+  }
+};
 
   //form in HTML format with 3 input fields for name, email, and password
   //submit button which redirects to the handleSubmit function
@@ -30,7 +34,7 @@ const Signup = () => {
       <h1>Signup</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="name">Name:</label>
+          <label htmlFor="name">Trash Can ID Number:</label>
           <input
             type="text"
             id="name"
