@@ -23,7 +23,9 @@ from keras.applications.vgg16 import preprocess_input as preprocess_input_vgg16
 from keras.applications.mobilenet_v2 import preprocess_input as preprocess_input_mobilenetv2
 from keras.applications.efficientnet import preprocess_input as preprocess_input_efficientnet
 from keras.models import load_model
+from RegisterationID import get_unique_id
 
+RegisterationID = get_unique_id()
 
 def connect_to_arduino():
     """
@@ -214,14 +216,21 @@ while True:
 
                 # Current time. Used as S3 filename and DynamoDB sortKey
                 date = datetime.now().strftime("%m-%d-%Y-%H:%M:%S")
-                trash_data = {
+
+
+                payload = {
                     "Type_of_Trash": class_label,
-                    "Weight": weight,
-                    "Date": date
+                    "Weight": weight
                 }
-                
-                client.publish("TrashAI", json.dumps(trash_data), qos=1)
-                print(f"Sent message {json.dumps(trash_data)} to topic TrashAI")
+
+                message = {
+                    "RegisterID": RegisterationID,
+                    "timestamp": date,
+                    "payload": payload
+                }
+
+                client.publish("TrashAI", json.dumps(message), qos=1)
+                print(f"Sent message {json.dumps(message)} to topic TrashAI")
                 upload_image_to_S3(class_label,date, "trash-images", picture)
                 print("Uploaded Image to S3!")
                 sleep(10)
