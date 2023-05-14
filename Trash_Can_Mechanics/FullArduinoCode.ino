@@ -60,7 +60,7 @@ void setup() {
 
   LoadCell.begin();
   float calibrationValue; // calibration value (see example file "Calibration.ino")
-  calibrationValue = 400.0; // uncomment this if you want to set the calibration value in the sketch
+  calibrationValue = 500.0; // uncomment this if you want to set the calibration value in the sketch
 #if defined(ESP8266)|| defined(ESP32)
 #endif
 
