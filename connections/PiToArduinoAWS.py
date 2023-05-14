@@ -19,13 +19,28 @@ from datetime import datetime
 import cv2
 import numpy as np
 import boto3
+import os
+import uuid
 from keras.applications.vgg16 import preprocess_input as preprocess_input_vgg16
 from keras.applications.mobilenet_v2 import preprocess_input as preprocess_input_mobilenetv2
 from keras.applications.efficientnet import preprocess_input as preprocess_input_efficientnet
 from keras.models import load_model
-from ..RegisterationID import get_unique_id
+
+ID_FILE_PATH = "/home/yaya/registerIDFile"
+
+
+def get_unique_id():
+    if not os.path.exists(ID_FILE_PATH):
+        id = str(uuid.uuid4())
+        with open(ID_FILE_PATH, 'w') as id_file:
+            id_file.write(id) # If no file, make it, then return new ID
+    else:
+        with open(ID_FILE_PATH, 'r') as id_file:
+            id = id_file.read().strip() # If file exists, query the ID
+    return id
 
 RegisterationID = get_unique_id()
+
 
 def connect_to_arduino():
     """
