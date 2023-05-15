@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 //import { Button } from '../Button';
 import './Profile.css';
 import avgs from './avgs.jpg'
+import amt from './amt.jpg'
 
 function Profile() {
 
@@ -24,7 +25,7 @@ function Profile() {
             <div className='profile-title'> 
                 <h1>Profile</h1>
             </div>
-            <div className='account'> 
+            {/* <div className='account'> 
                 My Account
             </div>
             <div className='name'> 
@@ -32,10 +33,15 @@ function Profile() {
             </div>
             <div className='email'> 
                 Email:
-            </div>
+            </div> */}
             <div> 
                 <img src= {avgs} alt='Trash AI Statistics' /> 
+                <img src= {amt} alt='Trash AI Statistics2' />
                 </div>
+                {/* <br></br>
+            <div> 
+                <img src= {amt} alt='Trash AI Statistics2' /> 
+                </div> */}
             {/* <div className='stats-btn'>
                 <Button 
                     className='btns' 
