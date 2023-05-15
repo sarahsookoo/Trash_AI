@@ -1,47 +1,37 @@
 .profile {
-    /* background: gray; */
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.2);
-    object-fit: contain;
-    
-  }
+  /* background: gray; */
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.2);
+  object-fit: contain;
+}
 
-  .profile-title {
-    font-size: 1.2rem;
-    align-items: center;
-    justify-content: center;
-    margin-top: 60px;
-    margin-bottom: 100px;
-  }
-
-.stats-btn {
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 400px;
-
+.profile-title {
+  font-size: 1.2rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 .account {
-    font-size:1.1rem;
+  font-size:1.1rem;
 }
 
 .name {
-    font-size:1.1rem;
+  font-size:1.1rem;
 }
 
 .email {
-    font-size:1.1rem;
+  font-size:1.1rem;
 }
 
 img {
-    display: block;
-    max-width: 100%;
-    height: auto;
-  }
-  
-    
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
