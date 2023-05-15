@@ -80,71 +80,75 @@ def login():
                 aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY'))
 
     
-        Trash_Stats = dynamo_client.Table('Trash_AI')
-        
-        #print(Trash_Stats.table_status) #should print ACTIVE if successfully connected
+        Trash_Stats = dynamo_client.Table('Trash_AI2')
+        user_data = Trash_Stats.scan(Select = "ALL_ATTRIBUTES",
+                    FilterExpression = Attr('registerID').eq('7ecb75f8-738b-4e45-9a61-df1c5e6188c7'))
 
-        ### PAPER DATA ###
+        Amount_of_Plastic = 0
+        Amount_of_Paper = 0
+        Amount_of_Trash = 0
 
-        paper_data = Trash_Stats.scan(Select = "ALL_ATTRIBUTES",
-                    FilterExpression = Attr('Type_of_Trash').eq('paper'))
+        types_of_trash = []
 
-        Paper_Items = paper_data['Items'] #all attributes that are paper
-        Amount_of_Paper = len(Paper_Items) #amount of attributes
+        Weights_of_Plastic = []
+        Weights_of_Paper = []
+        Weights_of_Trash = []
 
-        Paper_Weights = 0
+        Total_Weight_Plastic = 0
+        Total_Weight_Paper = 0
+        Total_Weight_Trash = 0
 
-        for x in Paper_Items:
-            Paper_Weights += x['Weight'] #add up the weight of all paper items
+        for x in user_data['Items']:
+            types_of_trash.append(x['payload']['Type_of_Trash'])
 
-        Paper_Avg_Weight = 0
+        #print(types_of_trash)
+        for x in types_of_trash:
+            if x == 'plastic':
+                Amount_of_Plastic += 1
+            elif x == 'paper':
+                Amount_of_Paper += 1
+            else:
+                Amount_of_Trash += 1
 
-        if Amount_of_Paper == 0:
-            Paper_Avg_Weight = 0
-        else:
-            Paper_Avg_Weight = Paper_Weights/Amount_of_Paper #divide total weight by amount of paper items for average
-        
-        ### PLASTIC DATA ###
-        plastic_data = Trash_Stats.scan(Select = "ALL_ATTRIBUTES",
-                FilterExpression = Attr('Type_of_Trash').eq('plastic'))
+        # print(Amount_of_Plastic)
+        # print(Amount_of_Paper)
+        # print(Amount_of_Trash)
 
-        Plastic_Items = plastic_data['Items'] #all attributes that are plastic
-        Amount_of_Plastic = len(Plastic_Items) #amount of attributes
+        for x in user_data['Items']:
+            if x['payload']['Type_of_Trash'] == 'plastic':
+                Weights_of_Plastic.append(x['payload']['Weight'])
+            if x['payload']['Type_of_Trash'] == 'paper':
+                Weights_of_Paper.append(x['payload']['Weight'])
+            if x['payload']['Type_of_Trash'] == 'trash':
+                Weights_of_Trash.append(x['payload']['Weight'])
 
-        Plastic_Weights = 0
+        # print(Weights_of_Plastic)
+        # print(Weights_of_Paper)
+        # print(Weights_of_Trash)
 
-        for x in Plastic_Items:
-            Plastic_Weights += x['Weight'] #add up the weight of all plastic items
-        
-        Plastic_Avg_Weight = 0
-        
-        if Amount_of_Plastic == 0:
-            Plastic_Avg_Weight = 0
-        else:
-            Plastic_Avg_Weight = Plastic_Weights/Amount_of_Plastic #divide total weight by amount of plastic items for average
-        #print(Plastic_Avg_Weight) #should be 25
+        for x in Weights_of_Plastic:
+            Total_Weight_Plastic += x
 
-        ### REGULAR TRASH DATA ###
-        regular_trash_data = Trash_Stats.scan(Select = "ALL_ATTRIBUTES",
-                FilterExpression = Attr('Type_of_Trash').eq('trash'))
+        for x in Weights_of_Paper:
+            Total_Weight_Paper += x
 
-        Regular_Trash_Items = regular_trash_data['Items'] #all attributes that are trash
-        Amount_of_Regular_Trash = len(Regular_Trash_Items) #amount of attributes
+        for x in Weights_of_Trash:
+            Total_Weight_Trash += x
 
-        Regular_Trash_Weights = 0
+        # print(Total_Weight_Plastic)
+        # print(Total_Weight_Paper)
+        # print(Total_Weight_Trash)
 
-        for x in Regular_Trash_Items:
-            Regular_Trash_Weights += x['Weight'] #add up the weight of all trash items
+        Avg_Weight_Plastic = Total_Weight_Plastic / Amount_of_Plastic
+        Avg_Weight_Paper = Total_Weight_Paper / Amount_of_Paper
+        Avg_Weight_Trash = Total_Weight_Trash / Amount_of_Trash
 
-        Regular_Trash_Avg_Weight = 0
+        # print(Avg_Weight_Plastic)
+        # print(Avg_Weight_Paper)
+        # print(Avg_Weight_Trash)
 
-        if Amount_of_Regular_Trash == 0:
-            Regular_Trash_Avg_Weight = 0
-        else:
-            Regular_Trash_Avg_Weight = Regular_Trash_Weights/Amount_of_Regular_Trash #divide total weight by amount of trash items for average
-
-        Types_of_Trash = ['Paper', 'Plastic', 'Regular Trash']
-        avg_weights = [Paper_Avg_Weight, Plastic_Avg_Weight, Regular_Trash_Avg_Weight]
+        Types_of_Trash = ['Plastic', 'Paper', 'Regular Trash']
+        avg_weights = [Avg_Weight_Plastic, Avg_Weight_Paper, Avg_Weight_Trash]
         df = pd.DataFrame({'Type of Trash': Types_of_Trash, 'Weight (grams)': avg_weights})
 
         # Create bar plot
@@ -157,96 +161,22 @@ def login():
         plot_path = './components/pages/avgs.jpg'  # Change this to a valid path
         plt.savefig(plot_path)
 
+        # Types_of_Trash = ['Plastic', 'Paper', 'Regular Trash']
+        # amt_trash = [Amount_of_Plastic, Amount_of_Paper, Amount_of_Trash]
+        # df = pd.DataFrame({'Type of Trash': Types_of_Trash, 'Amount of Items': amt_trash})
+
+        # # Create bar plot
+        # sns.set_style('whitegrid')
+        # sns.barplot(x='Type of Trash', y='Amount of Items', data=df)
+        # plt.title('Amount of Items per Each Class of Trash')
+        # plt.xlabel('Type of Trash')
+        # plt.ylabel('Amount of Items')
+        # #plt.show()
+        # plot_path = './components/pages/amt.jpg'  # Change this to a valid path
+        # plt.savefig(plot_path)
+        
         return jsonify({'message': 'Login successful'})
         #return user to login page
-
-    # user_info = User_Accounts_Table.get_item(Key={'email': email, 'Password': password_hash})
-    # print(user_info)
-    
-    # user_email = User_Accounts_Table.get_item(Key = {'email': email})
-    # print(user_email['Item'])
-    # user_password = User_Accounts_Table.get_item(Key = {'Password': password_hash})
-    # print(user_password)
-    
-    #user = next((u for u in users if u['name'] == name and u['password_hash'] == password_hash), None)
-    # if (username == name and user_password == password):
-    #     return jsonify({'message': 'Login successful'})
-    # else:
-    #     return jsonify({'message': 'Login failed'})
-
-# @app.route('/statistics', methods=['GET'])
-# def get_statistics():
-#     dynamo_client  =  boto3.resource(service_name = 'dynamodb',region_name = 'us-east-2',
-#                 aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID'),
-#                 aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY'))
-    
-#     Trash_Stats = dynamo_client.Table('Trash_AI')
-    
-#     #print(Trash_Stats.table_status) #should print ACTIVE if successfully connected
-
-#     ### PAPER DATA ###
-
-#     paper_data = Trash_Stats.scan(Select = "ALL_ATTRIBUTES",
-#                 FilterExpression = Attr('Type_of_Trash').eq('Paper'))
-
-#     Paper_Items = paper_data['Items'] #all attributes that are paper
-#     Amount_of_Paper = len(Paper_Items) #amount of attributes
-
-#     Paper_Weights = 0
-
-#     for x in Paper_Items:
-#         Paper_Weights += x['Weight'] #add up the weight of all paper items
-
-#     Paper_Avg_Weight = Paper_Weights/Amount_of_Paper #divide total weight by amount of paper items for average
-#     #print(Paper_Avg_Weight) #should be 25
-    
-#     ### PLASTIC DATA ###
-#     plastic_data = Trash_Stats.scan(Select = "ALL_ATTRIBUTES",
-#             FilterExpression = Attr('Type_of_Trash').eq('Plastic'))
-
-#     Plastic_Items = plastic_data['Items'] #all attributes that are plastic
-#     Amount_of_Plastic = len(Plastic_Items) #amount of attributes
-
-#     Plastic_Weights = 0
-
-#     for x in Plastic_Items:
-#         Plastic_Weights += x['Weight'] #add up the weight of all plastic items
-
-#     Plastic_Avg_Weight = Plastic_Weights/Amount_of_Plastic #divide total weight by amount of plastic items for average
-#     #print(Plastic_Avg_Weight) #should be 25
-
-#     ### REGULAR TRASH DATA ###
-#     regular_trash_data = Trash_Stats.scan(Select = "ALL_ATTRIBUTES",
-#             FilterExpression = Attr('Type_of_Trash').eq('trash'))
-
-#     Regular_Trash_Items = regular_trash_data['Items'] #all attributes that are trash
-#     Amount_of_Regular_Trash = len(Regular_Trash_Items) #amount of attributes
-
-#     Regular_Trash_Weights = 0
-
-#     for x in Regular_Trash_Items:
-#         Regular_Trash_Weights += x['Weight'] #add up the weight of all trash items
-
-#     Regular_Trash_Avg_Weight = Regular_Trash_Weights/Amount_of_Regular_Trash #divide total weight by amount of trash items for average
-#     #print(Regular_Trash_Avg_Weight) #should be 25
-
-#     Types_of_Trash = ['Paper', 'Plastic', 'Regular Trash']
-#     avg_weights = [Paper_Avg_Weight, Plastic_Avg_Weight, Regular_Trash_Avg_Weight]
-#     df = pd.DataFrame({'Type of Trash': Types_of_Trash, 'Weight (grams)': avg_weights})
-
-#     # Create bar plot
-#     sns.set_style('whitegrid')
-#     sns.barplot(x='Type of Trash', y='Weight (grams)', data=df)
-#     plt.title('Average Weight of Trash')
-#     plt.xlabel('Type of Trash')
-#     plt.ylabel('Weight of Trash (grams)')
-#     #plt.show()
-#     plot_path = './avgs.png'  # Change this to a valid path
-#     plt.savefig(plot_path)
-#     # plot_path_profile = '../avgs.png'
-    
-#     return jsonify({'plot_path': plot_path})
-
 
 if __name__ == '__main__':
     app.run()
