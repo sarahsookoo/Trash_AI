@@ -14,6 +14,14 @@
 #include <EEPROM.h>
 #endif
 
+//delays and weight values
+const int numberOfReadings = 20;
+const int stepperDelay = 3000;
+const int actuatorDelay = 4000;
+const int nextObjectDelay = 5000;
+const int betweenWeightDelay = 10;
+const int betweenStepperDelay = 40;
+
 // defines stepper pin numbers
 const int stepPin = 3;
 const int dirPin = 4;
@@ -51,19 +59,15 @@ void setup() {
   //Loadcell code vv
 
   LoadCell.begin();
-  //LoadCell.setReverseOutput(); //uncomment to turn a negative output value to positive
   float calibrationValue; // calibration value (see example file "Calibration.ino")
-  calibrationValue = 696.0; // uncomment this if you want to set the calibration value in the sketch
+  calibrationValue = 500.0; // uncomment this if you want to set the calibration value in the sketch
 #if defined(ESP8266)|| defined(ESP32)
-  //EEPROM.begin(512); // uncomment this if you use ESP8266/ESP32 and want to fetch the calibration value from eeprom
 #endif
-  //EEPROM.get(calVal_eepromAdress, calibrationValue); // uncomment this if you want to fetch the calibration value from eeprom
 
   unsigned long stabilizingtime = 2000; // preciscion right after power-up can be improved by adding a few seconds of stabilizing time
   boolean _tare = true; //set this to false if you don't want tare to be performed in the next step
   LoadCell.start(stabilizingtime, _tare);
   if (LoadCell.getTareTimeoutFlag()) {
-    //Serial.println("Timeout, check MCU>HX711 wiring and pin designations");
     while (1);
   }
   else {
@@ -83,11 +87,19 @@ void loop() {
 
     // get smoothed value from the dataset:
     if (newDataReady) {
+      weight = 0;
       if (millis() > t + serialPrintInterval) {
-        weight = LoadCell.getData();
-        if (weight > 5){ //Minimum weight requirement
+        // take multiple load cell readings for stable avg
+        for (int i = 0; i < numberOfReadings; i++) {
+          weight += LoadCell.getData();
+          delay(betweenWeightDelay);
+        }
+        float avgWeight = weight / numberOfReadings;
+        
+        if (avgWeight > 0){ //Minimum weight requirement
           //Serial.print("Load_cell output val: ");
-          Serial.println(weight);
+          delay(25000);
+          Serial.println(avgWeight);
           checkForNewWeight = false;
         }
         newDataReady = 0;
@@ -105,13 +117,7 @@ void loop() {
     
     // Based on material type, operate
     if(data == 0) {
-       // Move to trash
-
-        /*
-        int value1 = 123; // Some integer value to send back to pi
-        Serial.println(value1); // Send the value back to the computer as serial data
-        */
-        
+       // Move to plastic
 
         digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
 
@@ -119,42 +125,35 @@ void loop() {
 
         for(int x = 0; x < 33; x++) { // Move stepper 1/3rd of the way counter-clockwise
           digitalWrite(stepPin,HIGH);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
           digitalWrite(stepPin,LOW);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
         }
-        delay(3000);
+        delay(stepperDelay);
         // Accelerate forward
         digitalWrite(LPWM, LOW);
         analogWrite(RPWM, 255);
        
-        delay(4000);
+        delay(actuatorDelay);
 
         // Accelerate reverse
         digitalWrite(RPWM, LOW);
         analogWrite(LPWM, 255);
 
-        delay(5000);
-        delay(3000);
+        delay(actuatorDelay);
+        delay(stepperDelay);
 
         digitalWrite(dirPin,LOW);
         for(int x = 0; x < 33; x++) { // Move stepper 1/3rd of the way clockwise
           digitalWrite(stepPin,HIGH);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
           digitalWrite(stepPin,LOW);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
         }
-        delay(3000);
+        delay(stepperDelay);
     }
     else if(data == 1){
-        // Do something when '1' is received
-        
-
-        /*
-        int value2 = 456; // Some integer value to send back
-        Serial.println(value2); // Send the value back to the computer as serial data
-        */
-
+        // Move to paper
 
         digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
 
@@ -162,81 +161,74 @@ void loop() {
 
         for(int x = 0; x < 99; x++) { // Move stepper 2/3rd of the way counter-clockwise
           digitalWrite(stepPin,HIGH);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
           digitalWrite(stepPin,LOW);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
         }
-        delay(3000);
+        delay(stepperDelay);
         // Accelerate forward
         digitalWrite(LPWM, LOW);
         analogWrite(RPWM, 255);
        
-        delay(4000);
+        delay(actuatorDelay);
 
         // Accelerate reverse
         digitalWrite(RPWM, LOW);
         analogWrite(LPWM, 255);
 
-        delay(5000);
-        delay(3000);
+        delay(actuatorDelay);
+        delay(stepperDelay);
 
         digitalWrite(dirPin,LOW);
         for(int x = 0; x < 99; x++) { // Move stepper 2/3rd of the way clockwise
           digitalWrite(stepPin,HIGH);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
           digitalWrite(stepPin,LOW);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
         }
-        delay(3000);        
+        delay(stepperDelay);        
     }
 
 
     else if(data == 2){
-        // Do something when '2' is received
+        // Move to trash
 
-
-        /*
-        int value3 = 789; // Some integer value to send back
-        Serial.println(value3); // Send the value back to the computer as serial data
-        */
-
-
-        digitalWrite(dirPin,HIGH); // Enables the motor to move in a particular direction
+        digitalWrite(dirPin,LOW); // Enables the motor to move in a particular direction
 
         // Makes 200 pulses for making one full cycle rotation (66 is 1/3 of full)
 
-        for(int x = 0; x < 165; x++) { // Move stepper 1/3rd of the way counter-clockwise
+        for(int x = 0; x < 33; x++) { // Move stepper 1/3rd of the way counter-clockwise
           digitalWrite(stepPin,HIGH);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
           digitalWrite(stepPin,LOW);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
         }
-        delay(3000);
+        delay(stepperDelay);
         // Accelerate forward
         digitalWrite(LPWM, LOW);
         analogWrite(RPWM, 255);
        
-        delay(4000);
+        delay(actuatorDelay);
 
         // Accelerate reverse
         digitalWrite(RPWM, LOW);
         analogWrite(LPWM, 255);
 
-        delay(5000);
-        delay(3000);
+        delay(actuatorDelay);
+        delay(stepperDelay);
 
-        digitalWrite(dirPin,LOW);
-        for(int x = 0; x < 165; x++) { // Move stepper 1/3rd of the way counter-clockwise
+        digitalWrite(dirPin,HIGH);
+        for(int x = 0; x < 33; x++) { // Move stepper 1/3rd of the way counter-clockwise
           digitalWrite(stepPin,HIGH);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
           digitalWrite(stepPin,LOW);
-          delayMicroseconds(5000);
+          delay(betweenStepperDelay);
         }
-        delay(3000);        
+        delay(stepperDelay);        
        
       }
     
     checkForNewWeight = true; // Enable checking for new weight
-    delay(10000);
+    delay(nextObjectDelay);
    }
 }
