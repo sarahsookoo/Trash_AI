@@ -201,16 +201,16 @@ if client or model or arduino is None:
 
 print("All connections succesfful!")
 
-weightAveragge = 0
+weightAverage = 0
 
 
 while True:
     try:
         for i in range(1, 51):
-            weightAveragg = read_weight_from_arduino(arduino_serial=arduino)
+            weightAverage = read_weight_from_arduino(arduino_serial=arduino)
 
-        if weightAveragg is not None:
-            print("The weight from the Arduino is: ", weight)
+        if weightAverage is not None:
+            print("The weight from the Arduino is: ", weightAverage)
             camera = cv2.VideoCapture(0)
             camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
             camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
@@ -239,7 +239,7 @@ while True:
 
                 payload = {
                     "Type_of_Trash": class_label,
-                    "Weight": weight
+                    "Weight": weightAverage
                 }
 
                 message = {
