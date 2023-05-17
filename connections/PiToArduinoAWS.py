@@ -198,16 +198,11 @@ client = safely_execute_connection_function(connect_to_aws)
 
 print("All connections succesfful!")
 
-weightAverage = 0
-
 
 while True:
     try:
 
-        for i in range(1, 51):
-            weightAverage += read_weight_from_arduino(arduino_serial=arduino)
-
-        weightAverage = weightAverage/50
+        weightAverage = read_weight_from_arduino(arduino_serial=arduino)
 
         if weightAverage is not None:
             print("The weight from the Arduino is: ", weightAverage)
