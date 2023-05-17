@@ -195,9 +195,6 @@ model = load_local_model('/home/yaya/Projects/Trash_AI/models/mobileNetV2.h5')
 arduino = safely_execute_connection_function(connect_to_arduino)
 client = safely_execute_connection_function(connect_to_aws)
 
-if client or model or arduino is None:
-    print("Error: Connection. Exiting the program.")
-    exit(1)
 
 print("All connections succesfful!")
 
@@ -206,8 +203,11 @@ weightAverage = 0
 
 while True:
     try:
+
         for i in range(1, 51):
-            weightAverage = read_weight_from_arduino(arduino_serial=arduino)
+            weightAverage += read_weight_from_arduino(arduino_serial=arduino)
+
+        weightAverage = weightAverage/50
 
         if weightAverage is not None:
             print("The weight from the Arduino is: ", weightAverage)
