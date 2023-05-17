@@ -195,17 +195,21 @@ model = load_local_model('/home/yaya/Projects/Trash_AI/models/mobileNetV2.h5')
 arduino = safely_execute_connection_function(connect_to_arduino)
 client = safely_execute_connection_function(connect_to_aws)
 
-if client is None:
+if client or model or arduino is None:
     print("Error: Connection. Exiting the program.")
     exit(1)
 
 print("All connections succesfful!")
 
+weightAveragge = 0
+
+
 while True:
     try:
-        weight = read_weight_from_arduino(arduino_serial=arduino)
+        for i in range(1, 51):
+            weightAveragg = read_weight_from_arduino(arduino_serial=arduino)
 
-        if weight is not None:
+        if weightAveragg is not None:
             print("The weight from the Arduino is: ", weight)
             camera = cv2.VideoCapture(0)
             camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
@@ -245,11 +249,13 @@ while True:
                 }
 
                 client.publish("TrashAI", json.dumps(message), qos=1)
-                print(f"Sent message {json.dumps(message)} to topic TrashAI")
+                print(f"Sent message {json.dumps(message)} to topic TrashAI, and DynamoDB table")
+
                 upload_image_to_S3(class_label,date, "trash-images", picture)
                 print("Uploaded Image to S3!")
+
                 sleep(10)
-                print("Waiting for weight from Arduino...")
+                print("Waiting for next weight from Arduino...")
             else:
                 print("Failed to capture an image")
     except Exception as e:
@@ -266,4 +272,5 @@ Pi to arduino AND back - https://roboticsbackend.com/raspberry-pi-arduino-serial
 HX711 setup (WITHOUT ARDUINO) - https://github.com/tatobari/hx711py/blob/master/example.py
 Using the model to detect Images - https://stackoverflow.com/questions/50443411/how-to-load-a-tflite-model-in-script
 Image preprocessing - https://stackoverflow.com/questions/66426381/what-is-the-use-of-expand-dims-in-image-processing
+Upload images to s3 - https://stackoverflow.com/questions/55583861/upload-image-from-opencv-to-s3-bucket
 """
