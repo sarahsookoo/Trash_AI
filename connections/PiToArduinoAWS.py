@@ -19,10 +19,27 @@ from datetime import datetime
 import cv2
 import numpy as np
 import boto3
+import os
+import uuid
 from keras.applications.vgg16 import preprocess_input as preprocess_input_vgg16
 from keras.applications.mobilenet_v2 import preprocess_input as preprocess_input_mobilenetv2
 from keras.applications.efficientnet import preprocess_input as preprocess_input_efficientnet
 from keras.models import load_model
+
+ID_FILE_PATH = "/home/yaya/registerIDFile"
+
+
+def get_unique_id():
+    if not os.path.exists(ID_FILE_PATH):
+        id = str(uuid.uuid4())
+        with open(ID_FILE_PATH, 'w') as id_file:
+            id_file.write(id) # If no file, make it, then return new ID
+    else:
+        with open(ID_FILE_PATH, 'r') as id_file:
+            id = id_file.read().strip() # If file exists, query the ID
+    return id
+
+RegisterationID = get_unique_id()
 
 
 def connect_to_arduino():
@@ -178,18 +195,17 @@ model = load_local_model('/home/yaya/Projects/Trash_AI/models/mobileNetV2.h5')
 arduino = safely_execute_connection_function(connect_to_arduino)
 client = safely_execute_connection_function(connect_to_aws)
 
-if client is None:
-    print("Error: Connection. Exiting the program.")
-    exit(1)
 
 print("All connections succesfful!")
 
+
 while True:
     try:
-        weight = read_weight_from_arduino(arduino_serial=arduino)
 
-        if weight is not None:
-            print("The weight from the Arduino is: ", weight)
+        weightAverage = read_weight_from_arduino(arduino_serial=arduino)
+
+        if weightAverage is not None:
+            print("The weight from the Arduino is: ", weightAverage)
             camera = cv2.VideoCapture(0)
             camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
             camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
@@ -214,18 +230,27 @@ while True:
 
                 # Current time. Used as S3 filename and DynamoDB sortKey
                 date = datetime.now().strftime("%m-%d-%Y-%H:%M:%S")
-                trash_data = {
+
+
+                payload = {
                     "Type_of_Trash": class_label,
-                    "Weight": weight,
-                    "Date": date
+                    "Weight": weightAverage
                 }
-                
-                client.publish("TrashAI", json.dumps(trash_data), qos=1)
-                print(f"Sent message {json.dumps(trash_data)} to topic TrashAI")
+
+                message = {
+                    "RegisterID": RegisterationID,
+                    "timestamp": date,
+                    "payload": payload
+                }
+
+                client.publish("TrashAI", json.dumps(message), qos=1)
+                print(f"Sent message {json.dumps(message)} to topic TrashAI, and DynamoDB table")
+
                 upload_image_to_S3(class_label,date, "trash-images", picture)
                 print("Uploaded Image to S3!")
+
                 sleep(10)
-                print("Waiting for weight from Arduino...")
+                print("Waiting for next weight from Arduino...")
             else:
                 print("Failed to capture an image")
     except Exception as e:
@@ -242,4 +267,5 @@ Pi to arduino AND back - https://roboticsbackend.com/raspberry-pi-arduino-serial
 HX711 setup (WITHOUT ARDUINO) - https://github.com/tatobari/hx711py/blob/master/example.py
 Using the model to detect Images - https://stackoverflow.com/questions/50443411/how-to-load-a-tflite-model-in-script
 Image preprocessing - https://stackoverflow.com/questions/66426381/what-is-the-use-of-expand-dims-in-image-processing
+Upload images to s3 - https://stackoverflow.com/questions/55583861/upload-image-from-opencv-to-s3-bucket
 """
